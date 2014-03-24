@@ -406,12 +406,12 @@ static void share_result(int result, const char *reason)
 	pthread_mutex_unlock(&stats_lock);
 	
 	sprintf(s, hashrate >= 1e6 ? "%.0f" : "%.2f", 1e-3 * hashrate);
-	applog(LOG_INFO, "accepted: %lu/%lu (%.2f%%), %s khash/s %s",
+	applog(LOG_INFO, "rate=%lu/%lu percent=%.2f%% khash=%s result=%s",
 		   accepted_count,
 		   accepted_count + rejected_count,
 		   100. * accepted_count / (accepted_count + rejected_count),
 		   s,
-		   result ? "(yay!!!)" : "(booooo)");
+		   result ? "accepted" : "rejected");
 
 	if (opt_debug && reason)
 		applog(LOG_DEBUG, "DEBUG: reject reason: %s", reason);
@@ -941,9 +941,9 @@ static void *miner_thread(void *userdata)
 				sprintf(gpupowbuf, "%dW", (mwatts / 1000));
 #endif
 
-			applog(LOG_INFO, "GPU #%d: %s, %s khash/s",
-				device_map[thr_id], device_name[thr_id], s);
-			applog(LOG_INFO, "        Temp: %s  Fan speed: %s  Power: %s",
+			applog(LOG_INFO, "gpu=%d khash=%s device='%s' temp=%s fan=%s power=%s",
+				device_map[thr_id], s, device_name[thr_id],
+			// applog(LOG_INFO, "        Temp: %s  Fan speed: %s  Power: %s",
 				gputempbuf, gpufanbuf, gpupowbuf);
 			} 
 			else
